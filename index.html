@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VOID ONE</title>
+<meta name="description" content="VOID ONE: marcador neumático no letal calibre .68, diseñado y fabricado en Cochabamba por Montalvo Dynamics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  /* OBSIDIANA v2. Un solo mundo oscuro; el cromo es el protagonista. Ambar = accion; verde fosforo solo dentro del HUD de la mira. */
+  --negro: #0a0a0b;
+  --grafito: #121316;
+  --linea: #24252a;
+  --arena: #f2efe9;
+  --gris: #a2a7ae;
+  --ambar: #d96a00;
+  --hud: #7dffb0;
+  --display: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --gut: clamp(16px, 4vw, 56px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--negro); color: var(--arena); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+h1, h2, h3 { font-family: var(--display); font-weight: 300; text-wrap: balance; margin: 0; letter-spacing: -0.015em; }
+:focus-visible { outline: 2px solid var(--ambar); outline-offset: 3px; }
+.ey { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--ambar); text-transform: uppercase; }
+.mut { color: var(--gris); }
+
+/* ---------- navegacion fija ---------- */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px var(--gut); transition: background .4s, padding .4s, border-color .4s; border-bottom: 1px solid transparent; }
+nav.solida { background: rgba(10,10,11,.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding-top: 14px; padding-bottom: 14px; border-color: var(--linea); }
+.marca { display: flex; align-items: center; gap: 12px; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: .32em; white-space: nowrap; }
+.marca b { color: var(--ambar); font-weight: 600; }
+.links { display: flex; align-items: center; gap: 30px; font-size: 13px; letter-spacing: .05em; }
+.links a { text-decoration: none; color: var(--gris); transition: color .2s; }
+.links a:hover { color: var(--arena); }
+.links .wa-nav { color: var(--arena); border: 1px solid #3a3b40; padding: 9px 16px; }
+.links .wa-nav:hover { border-color: var(--ambar); }
+
+/* ---------- hero: todo en la primera pantalla ---------- */
+.hero { position: relative; min-height: min(100svh, 980px); padding: 120px var(--gut) 0; display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
+.hero::before { content: ""; position: absolute; left: 35%; top: 10%; width: 70%; height: 75%; background: radial-gradient(ellipse at 50% 55%, rgba(217,106,0,.11), transparent 62%); pointer-events: none; }
+.mega { position: absolute; right: -2vw; top: 14%; font-family: var(--display); font-weight: 200; font-size: clamp(110px, 18vw, 280px); letter-spacing: .03em; line-height: .9; color: #141518; white-space: nowrap; user-select: none; pointer-events: none; }
+.escena { position: absolute; left: 30%; right: 0; top: 70px; bottom: 150px; }
+.poster, #gl { position: absolute; inset: 0; width: 100%; height: 100%; }
+.poster { object-fit: contain; transition: opacity .9s ease; }
+#gl { opacity: 0; transition: opacity .9s ease; touch-action: pan-y; cursor: grab; }
+#gl:active { cursor: grabbing; }
+.listo #gl { opacity: 1; }
+.listo .poster { opacity: 0; }
+.sello { position: absolute; left: 50%; top: 12%; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--ambar); border: 1px solid var(--ambar); padding: 8px 14px; background: rgba(10,10,11,.7); opacity: 0; transition: opacity .5s; pointer-events: none; white-space: nowrap; }
+.dentro .sello { opacity: 1; }
+.txt { position: relative; z-index: 3; align-self: center; max-width: 500px; padding-bottom: 40px; }
+.txt h1 { font-weight: 200; font-size: clamp(64px, 8.4vw, 124px); line-height: .92; margin-top: 18px; letter-spacing: -.02em; }
+.txt p { margin: 22px 0 30px; max-width: 30ch; color: var(--gris); font-size: 18px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; padding: 16px 24px; border: 1px solid transparent; transition: background .2s, border-color .2s, transform .2s; }
+.btn-1 { background: var(--ambar); color: #0a0a0b; }
+.btn-1:hover { background: #ee7a0c; transform: translateY(-1px); }
+.btn-2 { border-color: #3a3b40; color: var(--arena); }
+.btn-2:hover { border-color: var(--arena); }
+.ctrl { position: absolute; right: var(--gut); bottom: 176px; z-index: 4; }
+.ctrl button { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; background: rgba(10,10,11,.6); color: var(--arena); border: 1px solid #3a3b40; padding: 10px 14px; cursor: pointer; }
+.ctrl button[aria-pressed="true"] { border-color: var(--ambar); color: var(--ambar); }
+.ctrl button:hover { border-color: var(--arena); }
+.specs { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--linea); }
+.specs div { padding: 22px 0 30px 24px; border-left: 1px solid var(--linea); }
+.specs div:first-child { border-left: 0; padding-left: 0; }
+.specs small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: #8a9099; }
+.specs b { display: block; font-family: var(--display); font-weight: 200; font-size: clamp(34px, 3.6vw, 52px); line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.specs i { font-style: normal; font-size: 15px; color: #8a9099; margin-left: 5px; font-weight: 400; }
+.entra { animation: entra .9s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes entra { from { transform: translateY(18px); } to { transform: none; } }
+
+/* ---------- cinta ---------- */
+.cinta { border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); overflow: hidden; white-space: nowrap; padding: 18px 0; margin-top: 0; }
+.cinta div { display: inline-block; font-family: var(--display); font-weight: 200; font-size: clamp(28px, 4vw, 54px); letter-spacing: .06em; color: #2b2c31; will-change: transform; }
+.cinta span { color: var(--ambar); margin: 0 .6em; }
+
+/* ---------- secciones ---------- */
+section.bloque { padding: clamp(80px, 11vw, 150px) var(--gut) 0; }
+.bloque h2 { font-size: clamp(34px, 4.4vw, 56px); line-height: 1.06; margin-top: 18px; max-width: 18ch; }
+.bloque p { margin: 0; color: var(--gris); max-width: 60ch; font-size: 18px; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 6vw, 96px); align-items: end; }
+.manifiesto { font-family: var(--display); font-weight: 200; font-size: clamp(30px, 4.2vw, 60px); line-height: 1.15; letter-spacing: -.01em; max-width: 24ch; margin-top: 22px; }
+.manifiesto em { font-style: normal; color: var(--ambar); }
+
+.pasos { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2.4vw, 32px); }
+.pasos li { position: relative; background: var(--grafito); border: 1px solid var(--linea); padding: clamp(24px, 3vw, 40px); overflow: hidden; }
+.pasos .n { font-family: var(--display); font-weight: 200; font-size: clamp(64px, 7vw, 104px); line-height: 1; color: #24262b; }
+.pasos h3 { font-size: 26px; font-weight: 400; margin: 18px 0 10px; }
+.pasos p { font-size: 16px; }
+.pasos li::after { content: ""; position: absolute; left: 0; top: 0; height: 2px; width: 100%; background: var(--ambar); transform-origin: left; transform: scaleX(var(--k, 1)); }
+
+/* tecnologia: mira S-01 */
+.tec { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(28px, 4vw, 64px); align-items: center; margin-top: 56px; }
+.hudbox { position: relative; aspect-ratio: 16 / 9; background: radial-gradient(ellipse at 50% 45%, #2a2e34, #0b0d10 75%); border: 1px solid var(--linea); overflow: hidden; }
+.hudbox svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hudbox::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px); pointer-events: none; }
+.vivo { position: absolute; left: 14px; top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--hud); display: flex; align-items: center; gap: 8px; z-index: 2; }
+.vivo i { width: 7px; height: 7px; border-radius: 50%; background: #ff4b3e; animation: pulso 1.4s infinite; }
+@keyframes pulso { 50% { opacity: .2; } }
+.tec ul { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; }
+.tec li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; font-size: 16px; color: var(--gris); }
+.tec li b { font-family: var(--mono); color: var(--hud); font-weight: 500; font-size: 13px; padding-top: 2px; }
+.ruta { margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--linea); }
+.ruta div { padding: 26px 26px 0 0; }
+.ruta div + div { padding-left: 26px; border-left: 1px solid var(--linea); }
+.ruta small { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--ambar); }
+.ruta h3 { font-size: 24px; font-weight: 400; margin: 10px 0 8px; }
+.ruta p { font-size: 15px; }
+.estado { display: inline-block; margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; padding: 4px 8px; border: 1px solid #3a3b40; color: var(--gris); }
+.estado.si { border-color: var(--ambar); color: var(--ambar); }
+
+.ficha { margin-top: 48px; display: grid; grid-template-columns: repeat(2, 1fr); column-gap: clamp(28px, 6vw, 96px); }
+.ficha div { display: flex; justify-content: space-between; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--linea); font-size: 17px; }
+.ficha dt { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--gris); text-transform: uppercase; padding-top: 4px; }
+.ficha dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+.tres { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 40px); }
+.tres div { border-top: 1px solid var(--ambar); padding-top: 22px; }
+.tres h3 { font-size: 26px; font-weight: 400; margin-bottom: 10px; }
+.tres p { font-size: 16px; }
+
+.equipo { margin-top: 48px; display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px, 3vw, 32px); }
+.persona { background: var(--grafito); border: 1px solid var(--linea); padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 6px; transition: border-color .3s; }
+.persona:hover { border-color: #3a3b40; }
+.persona h3 { font-size: clamp(26px, 2.8vw, 34px); font-weight: 300; }
+.persona .rol { font-family: var(--mono); font-size: 13px; letter-spacing: .12em; color: var(--gris); text-transform: uppercase; }
+.persona a { margin-top: 20px; align-self: flex-start; font-size: 14px; letter-spacing: .05em; text-decoration: none; border-bottom: 1px solid var(--ambar); padding-bottom: 3px; }
+.persona a:hover { color: var(--ambar); }
+
+.contacto { margin: clamp(80px, 11vw, 150px) var(--gut) 0; padding: clamp(36px, 6vw, 80px); background: var(--grafito); border: 1px solid var(--linea); display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: end; position: relative; overflow: hidden; }
+.contacto::before { content: ""; position: absolute; right: -10%; top: -40%; width: 60%; height: 180%; background: radial-gradient(ellipse, rgba(217,106,0,.12), transparent 60%); pointer-events: none; }
+.contacto h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1.02; }
+.contacto .der { position: relative; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.num { font-family: var(--mono); font-size: 14px; color: var(--gris); }
+
+footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: #6b7078; text-transform: uppercase; }
+
+@media (max-width: 980px) {
+  .links a:not(.wa-nav) { display: none; }
+  .hero { padding-top: 96px; grid-template-rows: auto auto auto; min-height: 0; }
+  .escena { position: relative; left: auto; right: auto; top: auto; bottom: auto; height: clamp(240px, 56vw, 460px); margin: 0 calc(var(--gut) * -1); order: 2; }
+  .txt { order: 1; padding-bottom: 0; max-width: none; }
+  .ctrl { position: relative; right: auto; bottom: auto; order: 3; margin: -6px 0 18px; }
+  .specs { order: 4; grid-template-columns: repeat(3, 1fr); }
+  .specs div:nth-child(4) { border-left: 0; padding-left: 0; }
+  .specs div:nth-child(n+4) { border-top: 1px solid var(--linea); }
+  .mega { display: none; }
+  .dos, .tec, .contacto { grid-template-columns: 1fr; }
+  .pasos, .ruta, .tres { grid-template-columns: 1fr; }
+  .ruta div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--linea); margin-top: 26px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .specs { grid-template-columns: repeat(2, 1fr); }
+  .specs div:nth-child(n) { border-left: 0; padding-left: 0; border-top: 1px solid var(--linea); }
+  .specs div:nth-child(2n) { border-left: 1px solid var(--linea); padding-left: 18px; }
+  .specs div:nth-child(-n+2) { border-top: 0; }
+  .ficha, .equipo { grid-template-columns: 1fr; }
+  .btn { width: 100%; }
+  .cta { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .entra { animation: none; } .poster, #gl { transition: none; } .vivo i { animation: none; } }
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Principal">
+  <a class="marca" href="#inicio" aria-label="Montalvo Dynamics, inicio">
+    <svg width="30" height="28" viewBox="0 0 1000 946" aria-hidden="true"><defs><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb3e6"/><stop offset=".35" stop-color="#9ff0ff"/><stop offset=".65" stop-color="#fff2a8"/><stop offset="1" stop-color="#b9a6ff"/></linearGradient></defs><polygon points="0,222 84.3,583.2 383.7,946 248.4,515.6" fill="url(#ir)"/><polygon points="91.4,0 234.9,388.4 481.1,624 394.9,332.5" fill="url(#ir)"/><polygon points="1000,222 915.7,583.2 616.3,946 751.6,515.6" fill="url(#ir)"/><polygon points="908.6,0 765.1,388.4 518.9,624 605.1,332.5" fill="url(#ir)"/></svg>
+    <span>MONTALVO <b>DYNAMICS</b></span>
+  </a>
+  <div class="links">
+    <a href="#producto">Producto</a><a href="#tecnologia">Tecnología</a><a href="#ficha">Ficha</a><a href="#equipo">Equipo</a>
+    <a class="wa wa-nav" href="#contacto">WhatsApp</a>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="mega" aria-hidden="true">VOID ONE</div>
+  <div class="escena" id="escena">
+    <img class="poster" src="poster.webp" alt="El VOID ONE con acabado cromado, visto de tres cuartos">
+    <canvas id="gl" role="img" aria-label="Modelo 3D del VOID ONE. Arrastra para girarlo."></canvas>
+    <div class="sello">SISTEMA PROPIETARIO · CLASIFICADO</div>
+  </div>
+  <div class="txt entra">
+    <div class="ey">Prototipo 01 · Cochabamba 2026</div>
+    <h1>VOID<br>ONE</h1>
+    <p>Marcador neumático no letal calibre .68. Diseñado y fabricado en Bolivia.</p>
+    <div class="cta"><a class="btn btn-1 wa" href="#contacto">Escribir por WhatsApp</a><a class="btn btn-2" href="#tecnologia">Ver tecnología</a></div>
+  </div>
+  <div class="ctrl"><button type="button" id="dentro" aria-pressed="false">Ver por dentro</button></div>
+  <div class="specs entra" aria-label="Especificaciones principales" style="animation-delay:.15s">
+    <div><small>CALIBRE</small><b>.68</b></div>
+    <div><small>PRESIÓN</small><b>7,5<i>bar</i></b></div>
+    <div><small>CAPACIDAD</small><b>10<i>bolas</i></b></div>
+    <div><small>LARGO</small><b>987<i>mm</i></b></div>
+    <div><small>ENERGÍA</small><b>0<i>baterías</i></b></div>
+  </div>
+</header>
+
+<div class="cinta" aria-hidden="true"><div id="cinta">VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span></div></div>
+
+<section class="bloque" id="producto">
+  <div class="ey">01 · El producto</div>
+  <p class="manifiesto">Un marcador para <em>entrenar</em> como se entrena afuera, diseñado y fabricado <em>aquí</em>.</p>
+  <div class="dos" style="margin-top:48px">
+    <p>El VOID ONE es un marcador neumático no letal calibre .68 para entrenamiento táctico, marcación y uso recreativo. Funciona con aire comprimido: sin cápsulas desechables y sin baterías.</p>
+    <p>Su carcasa es modular y se fabrica con manufactura aditiva, así que cada parte se repara o se mejora sin cambiar el equipo completo.</p>
+  </div>
+</section>
+
+<section class="bloque" id="funciona">
+  <div class="ey">02 · Cómo funciona</div>
+  <h2>Tres pasos. El resto es ingeniería propia.</h2>
+  <ol class="pasos">
+    <li><div class="n">01</div><h3>Cargar</h3><p>Se carga con aire comprimido, igual que una llanta. Sin cápsulas ni repuestos importados.</p></li>
+    <li><div class="n">02</div><h3>Apuntar</h3><p>Miras fijas de alta visibilidad hoy; mira inteligente S-01 en desarrollo.</p></li>
+    <li><div class="n">03</div><h3>Disparar</h3><p>Un sistema neumático propio libera el aire de forma controlada en cada disparo.</p></li>
+  </ol>
+</section>
+
+<section class="bloque" id="tecnologia">
+  <div class="ey">03 · Tecnología · Futuro desarrollo</div>
+  <h2>Mira S-01: menos fuego amigo en cada práctica.</h2>
+  <div class="tec">
+    <div class="hudbox" id="hudbox"><div class="vivo"><i></i>FUTURO DESARROLLO · MIRA S-01</div><svg id="hud" viewBox="0 0 1600 900" aria-label="Vista de la mira S-01 marcando un aliado y dos oponentes" role="img"></svg></div>
+    <div>
+      <p>Una cámara y visión por computadora detectan a cada persona, la siguen y la clasifican antes de que aprietes el gatillo.</p>
+      <ul>
+        <li><b>01</b><span>Detecta y sigue a varias personas a la vez.</span></li>
+        <li><b>02</b><span>Reconoce a tu equipo y lo marca como aliado.</span></li>
+        <li><b>03</b><span>Si apuntas a un aliado, bloquea el disparo.</span></li>
+        <li><b>04</b><span>Nunca dispara por su cuenta: la decisión siempre es del tirador.</span></li>
+      </ul>
+      <a class="btn btn-2" style="margin-top:30px" href="https://santymontalvo.github.io/void-one/mira/" target="_blank" rel="noopener">Probar la demo</a>
+    </div>
+  </div>
+  <div class="ruta">
+    <div><small>FASE 01</small><h3>VOID ONE</h3><p>El marcador: neumático, modular y fabricado en Bolivia.</p><span class="estado si">PROTOTIPO FUNCIONAL</span></div>
+    <div><small>FASE 02</small><h3>Mira S-01</h3><p>Seguimiento de personas e identificación de aliados en tiempo real.</p><span class="estado">FUTURO DESARROLLO</span></div>
+    <div><small>FASE 03</small><h3>VOID Training</h3><p>Plataforma que registra disparos, puntería y fuego amigo para instructores.</p><span class="estado">EN DISEÑO</span></div>
+  </div>
+</section>
+
+<section class="bloque" id="ficha">
+  <div class="ey">04 · Ficha técnica</div>
+  <h2>VO1-001</h2>
+  <dl class="ficha">
+    <div><dt>Calibre</dt><dd>.68</dd></div>
+    <div><dt>Sistema</dt><dd>Neumático, aire comprimido</dd></div>
+    <div><dt>Presión de trabajo</dt><dd>7,5 bar</dd></div>
+    <div><dt>Disparo</dt><dd>Semiautomático</dd></div>
+    <div><dt>Capacidad</dt><dd>10 bolas</dd></div>
+    <div><dt>Energía</dt><dd>Sin baterías</dd></div>
+    <div><dt>Largo total</dt><dd>987 mm</dd></div>
+    <div><dt>Carcasa</dt><dd>Modular, manufactura aditiva</dd></div>
+  </dl>
+</section>
+
+<section class="bloque" id="origen">
+  <div class="ey">05 · Hecho en Cochabamba</div>
+  <h2>Ingeniería propia, de la idea al ensamble.</h2>
+  <div class="tres">
+    <div><h3>Modular</h3><p>Cada módulo de la carcasa se cambia por separado. Si algo se daña, se reemplaza solo esa parte.</p></div>
+    <div><h3>Reparable</h3><p>Pensado para mantenerse aquí, sin esperar repuestos de afuera.</p></div>
+    <div><h3>Local</h3><p>Diseñado, simulado, impreso y armado en Cochabamba.</p></div>
+  </div>
+</section>
+
+<section class="bloque" id="equipo">
+  <div class="ey">06 · Equipo</div>
+  <h2>Montalvo Dynamics</h2>
+  <div class="equipo">
+    <div class="persona"><h3>Santiago Montalvo</h3><span class="rol">CEO · Fundador · Director de diseño</span><a href="https://linktr.ee/montalvodynamics">linktr.ee/montalvodynamics</a></div>
+    <div class="persona"><h3>Juan Landivar</h3><span class="rol">COO · Socio · Director de manufactura</span><a href="https://linktr.ee/JuanLandivar">linktr.ee/JuanLandivar</a></div>
+  </div>
+</section>
+
+<section class="contacto" id="contacto">
+  <div><div class="ey">07 · Contacto</div><h2 style="margin-top:18px">¿Quieres verlo funcionar?</h2><p class="mut" style="margin:18px 0 0;max-width:44ch">Escríbenos para coordinar una demostración del VOID ONE y de la mira S-01.</p></div>
+  <div class="der"><a class="btn btn-1 wa" href="#contacto">Escribir por WhatsApp</a><span class="num" id="numero"></span></div>
+</section>
+
+<footer><span>Montalvo Industries · División Dynamics</span><span>Cochabamba, Bolivia · 2026</span></footer>
+
+<script>
+/* WhatsApp: numero con codigo de pais, solo digitos (ej. 5917xxxxxxx). Vacio = pendiente. */
+const WA_NUM = '59160713875';
+const WA_TXT = 'Hola, vi el VOID ONE y quiero saber más';
+(function () {
+  const n = document.getElementById('numero');
+  if (!WA_NUM) { n.textContent = 'Número de WhatsApp: pendiente'; return; }
+  const url = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_TXT);
+  document.querySelectorAll('a.wa').forEach(a => { a.href = url; });
+  n.textContent = 'WhatsApp +' + WA_NUM.replace(/^(\d{3})(\d+)/, '$1 $2');
+})();
+
+/* HUD de la mira S-01 (vista previa animada) */
+(function () {
+  const svg = document.getElementById('hud'), NS = 'http://www.w3.org/2000/svg', G = '#7dffb0', A = '#ffb020', C = '#58d6ff';
+  const el = (t, a, p = svg) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+  const txt = (x, y, s, col = G, sz = 15, anc = 'start', p = svg) => { const e = el('text', { x, y, fill: col, 'font-size': sz, 'text-anchor': anc, 'font-family': 'IBM Plex Mono, monospace', 'font-weight': 500 }, p); e.textContent = s; return e; };
+  const sil = (cx, base, h, p) => { const w = h * .36, hd = h * .13, g = el('g', { fill: '#2b3036' }, p);
+    el('circle', { cx, cy: base - h + hd, r: hd }, g); el('path', { d: `M${cx - w / 2} ${base} q0 ${-h * .62} ${w * .18} ${-h * .74} l${w * .64} 0 q${w * .18} ${h * .12} 0 ${h * .74} z` }, g); return g; };
+  el('rect', { x: 0, y: 560, width: 1600, height: 340, fill: '#15181c', opacity: .7 });
+  const gente = [{ x: 460, b: 640, h: 330, t: 'ALIADO · ID 02', s: 'FUEGO BLOQUEADO', c: C }, { x: 860, b: 600, h: 250, t: 'TRK 07 · DESCONOCIDO', s: '15 m', c: A }, { x: 1190, b: 660, h: 380, t: 'TRK 03 · OPONENTE', s: '9 m', c: A }];
+  const capas = gente.map(p => { const g = el('g', {}); sil(0, p.b, p.h, g); const w = p.h * .5, x0 = -w / 2, y0 = p.b - p.h - 14, c = 16;
+    el('path', { d: `M${x0} ${y0 + c}v${-c}h${c}M${x0 + w - c} ${y0}h${c}v${c}M${x0 + w} ${p.b - c}v${c}h${-c}M${x0 + c} ${p.b}h${-c}v${-c}`, fill: 'none', stroke: p.c, 'stroke-width': 2.4 }, g);
+    txt(x0, y0 - 12, p.t, p.c, 15, 'start', g); txt(x0, p.b + 24, p.s, p.c, 14, 'start', g); return { g, p }; });
+  for (let h = -40; h <= 40; h += 10) { const x = 800 + h * 8; el('line', { x1: x, y1: 58, x2: x, y2: h % 20 ? 70 : 76, stroke: G, 'stroke-width': 1.6 }); txt(x, 50, String((350 + h + 360) % 360).padStart(3, '0'), G, 13, 'middle'); }
+  [-150, -75, 75, 150].forEach(dy => { const y = 430 + dy; el('path', { d: `M640 ${y}h90v${dy < 0 ? 10 : -10}M870 ${y}h90v${dy < 0 ? 10 : -10}`, fill: 'none', stroke: G, 'stroke-width': 1.4, 'stroke-dasharray': dy < 0 ? 'none' : '6 5', opacity: .75 }); });
+  const ret = el('g', {}); el('circle', { cx: 800, cy: 430, r: 46, fill: 'none', stroke: G, 'stroke-width': 1.6 }, ret); el('circle', { cx: 800, cy: 430, r: 3, fill: G }, ret);
+  for (let a = 0; a < 360; a += 30) { const r2 = a % 90 ? 58 : 70, c = Math.cos(a * Math.PI / 180), s = Math.sin(a * Math.PI / 180); el('line', { x1: 800 + 46 * c, y1: 430 + 46 * s, x2: 800 + r2 * c, y2: 430 + r2 * s, stroke: G, 'stroke-width': 1.6 }, ret); }
+  el('rect', { x: 120, y: 250, width: 86, height: 360, fill: 'none', stroke: G, 'stroke-width': 1.4 }); el('rect', { x: 1394, y: 250, width: 86, height: 360, fill: 'none', stroke: G, 'stroke-width': 1.4 });
+  txt(163, 236, 'PRESIÓN BAR', G, 12, 'middle'); txt(1437, 236, 'DIST M', G, 12, 'middle');
+  el('rect', { x: 96, y: 414, width: 118, height: 32, fill: '#0d0f12', stroke: G, 'stroke-width': 1.6 }); el('rect', { x: 1386, y: 414, width: 118, height: 32, fill: '#0d0f12', stroke: G, 'stroke-width': 1.6 });
+  const pres = txt(155, 436, '7.4', G, 18, 'middle'), dist = txt(1445, 436, '12', G, 18, 'middle');
+  txt(800, 790, 'MODO ENTRENAMIENTO · IFF ACTIVO', G, 16, 'middle'); txt(800, 816, 'TRACKS 3 · ALIADOS 1 · SEGURO: ARMADO', G, 13, 'middle');
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches; let t0 = performance.now(), activo = true;
+  new IntersectionObserver(e => { activo = e[0].isIntersecting; }).observe(document.getElementById('hudbox'));
+  const paso = now => { const t = (now - t0) / 1000;
+    capas.forEach(({ g, p }, i) => { const dx = quieto ? 0 : Math.sin(t * (.35 + i * .17) + i) * (i === 0 ? 30 : 46); g.setAttribute('transform', `translate(${p.x + dx},0)`); });
+    if (!quieto) { ret.setAttribute('transform', `rotate(${(t * 12) % 360} 800 430)`); pres.textContent = (7.4 + Math.sin(t * .7) * .05).toFixed(1); dist.textContent = Math.round(12 + Math.sin(t * .4) * 3); }
+    if (activo && !quieto) requestAnimationFrame(paso); else if (!quieto) setTimeout(() => requestAnimationFrame(paso), 400); };
+  requestAnimationFrame(paso);
+})();
+
+/* Animaciones de scroll (solo transformaciones: todo se lee aunque no se mueva) */
+(function () {
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solida', scrollY > 40), { passive: true });
+  if (!window.gsap || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.to('#cinta', { xPercent: -33.333, ease: 'none', scrollTrigger: { trigger: '.cinta', start: 'top bottom', end: 'bottom top', scrub: .6 } });
+  gsap.to('.mega', { xPercent: -18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .6 } });
+  gsap.to('.txt', { y: -60, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .6 } });
+  document.querySelectorAll('section.bloque h2, .manifiesto').forEach(h => gsap.from(h, { y: 60, ease: 'power2.out', scrollTrigger: { trigger: h, start: 'top 95%', end: 'top 55%', scrub: .8 } }));
+  document.querySelectorAll('.pasos li, .ruta div, .tres div, .persona, .ficha div').forEach((e, i) => gsap.from(e, { y: 40, ease: 'power2.out', scrollTrigger: { trigger: e, start: 'top 98%', end: 'top 70%', scrub: .8 } }));
+  document.querySelectorAll('.pasos li').forEach(li => gsap.fromTo(li, { '--k': 0 }, { '--k': 1, ease: 'none', scrollTrigger: { trigger: li, start: 'top 90%', end: 'top 50%', scrub: .6 } }));
+  gsap.from('.hudbox', { scale: .92, ease: 'power2.out', scrollTrigger: { trigger: '.hudbox', start: 'top bottom', end: 'top 45%', scrub: .8 } });
+})();
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
+const escena = document.getElementById('escena'), canvas = document.getElementById('gl'), btn = document.getElementById('dentro');
+const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches, tactil = matchMedia('(pointer: coarse)').matches;
+function estudio() {
+  const e = new THREE.Scene();
+  e.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.MeshBasicMaterial({ color: 0x141518, side: THREE.BackSide })));
+  const piso = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshBasicMaterial({ color: 0x2a2b2e })); piso.rotation.x = -Math.PI / 2; piso.position.y = -2.2; e.add(piso);
+  const luz = (w, h, x, y, z, k, c = 0xffffff) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); e.add(m); };
+  luz(6, .6, 0, 4.5, 1.5, 6); luz(.8, 5, -5, 1, 2, 4); luz(.8, 5, 5, .5, -1, 3); luz(4, 1.2, 0, .6, 6, 2.5); luz(3, .25, 0, -1.2, -5, 5, 0xff8a3c); luz(9, 3, 0, -2, 3, .9); luz(2.5, 2.5, -3.5, 2.5, 4, 2.2);
+  return e;
+}
+const bin = b64 => { const s = atob(b64), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; };
+async function iniciar() {
+  const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: !!window.__ESTATICO });
+  r.setPixelRatio(Math.min(devicePixelRatio, 1.75)); r.toneMapping = THREE.ACESFilmicToneMapping;
+  const sc = new THREE.Scene(); sc.environment = new THREE.PMREMGenerator(r).fromScene(estudio(), .02).texture;
+  const cam = new THREE.PerspectiveCamera(24, 1, .01, 20);
+  const carga = new GLTFLoader();
+  const [me, mc] = await Promise.all([import('./modelo_ext.js'), import('./modelo_censura.js')]);
+  const [ext, cen] = await Promise.all([carga.parseAsync(bin(me.default), ''), carga.parseAsync(bin(mc.default), '')]);
+  const croma = new THREE.MeshPhysicalMaterial({ color: 0xf2f4f7, metalness: 1, roughness: .07, clearcoat: 1, clearcoatRoughness: .04, transparent: true });
+  const oscuro = new THREE.MeshPhysicalMaterial({ color: 0x23262b, metalness: 1, roughness: .18, transparent: true });
+  const ambar = new THREE.MeshPhysicalMaterial({ color: 0xd96a00, metalness: .6, roughness: .3, transparent: true });
+  ext.scene.traverse(o => { if (o.isMesh) { o.geometry = toCreasedNormals(o.geometry, THREE.MathUtils.degToRad(32)); o.material = /canon|gatillo/.test(o.name) ? oscuro : /miras/.test(o.name) ? ambar : croma; } });
+  const rayos = new THREE.MeshBasicMaterial({ color: 0xff8a2a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+  cen.scene.traverse(o => { if (o.isMesh) o.material = rayos; });
+  const piv = new THREE.Group(); piv.add(ext.scene, cen.scene); sc.add(piv);
+  const base = { x: .16, y: -.5 }; piv.rotation.set(base.x, base.y, 0);
+  const ctl = new OrbitControls(cam, canvas);
+  ctl.enableZoom = false; ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.minPolarAngle = Math.PI * .32; ctl.maxPolarAngle = Math.PI * .62;
+  ctl.autoRotate = !quieto; ctl.autoRotateSpeed = .5; if (tactil) ctl.enableRotate = false;
+  cam.position.set(0, 0, 2);
+  const tam = () => { const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.position.setLength(Math.max(1.35, (innerWidth < 980 ? 2.8 : 3.1) / cam.aspect)); cam.updateProjectionMatrix(); };
+  tam(); if (!window.__ESTATICO) new ResizeObserver(tam).observe(canvas);
+  let dentro = false, k = 0;
+  btn.addEventListener('click', () => { dentro = !dentro; btn.setAttribute('aria-pressed', dentro); btn.textContent = dentro ? 'Ver por fuera' : 'Ver por dentro'; escena.classList.toggle('dentro', dentro); });
+  if (window.__ESTATICO) { if (window.__DENTRO) { croma.opacity = oscuro.opacity = ambar.opacity = .1; croma.depthWrite = false; rayos.opacity = .5; escena.classList.add('dentro'); } r.render(sc, cam); escena.classList.add('listo'); window.__listo = true; return; }
+  let giro = 0;   // giro extra que da el scroll al salir del hero
+  if (window.ScrollTrigger && !quieto) ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, onUpdate: s => { giro = s.progress; } });
+  let visible = true; new IntersectionObserver(e => { visible = e[0].isIntersecting; }).observe(escena);
+  const reloj = new THREE.Clock();
+  const loop = () => { requestAnimationFrame(loop); if (!visible) return;
+    const meta = dentro ? 1 : 0; k += (meta - k) * (quieto ? 1 : .1);
+    croma.opacity = oscuro.opacity = ambar.opacity = 1 - .9 * k; croma.depthWrite = k < .1;
+    rayos.opacity = k * (.42 + .12 * Math.sin(reloj.getElapsedTime() * 3));
+    piv.rotation.y = base.y + giro * 1.4; piv.rotation.x = base.x + giro * .12;
+    ctl.update(); r.render(sc, cam); };
+  loop(); escena.classList.add('listo');
+}
+iniciar().catch(e => { console.error(e); btn.hidden = true; });
+</script>
+</body>
+</html>
