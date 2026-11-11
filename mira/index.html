@@ -3,27 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mira S-01 · Demo</title>
+<title>Mira S-01</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Montserrat:wght@200;300;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root { --g: #7dffb0; --a: #ffb020; --c: #58d6ff; --negro: #000; }
-html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color: var(--g); font-family: "IBM Plex Mono", ui-monospace, monospace; }
-.fondo { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(.35) contrast(1.12) brightness(.8); }
+/* Mira S-01 · mismo lenguaje que el VOID ONE: obsidiana, arena, ambar y el cristal iridiscente del logo */
+:root { --arena: #f2efe9; --gris: #a2a7ae; --ambar: #d96a00; --aliado: #9fe6ff; --linea: rgba(255,255,255,.14); }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color: var(--arena); font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.fondo { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.75) contrast(1.06) brightness(.82); }
 .espejo { transform: scaleX(-1); }
 #hud { position: fixed; inset: 0; width: 100%; height: 100%; }
-.scan { position: fixed; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.7)); }
-#inicio { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at 50% 40%, #0d1912, #000 72%); }
-.caja { max-width: 620px; text-align: center; }
-.caja small { font-size: 12px; letter-spacing: .3em; opacity: .8; }
-.caja h1 { font-family: Montserrat, sans-serif; font-weight: 200; font-size: clamp(48px, 9vw, 96px); letter-spacing: .04em; margin: 14px 0 6px; color: #e9fff2; text-shadow: 0 0 24px rgba(125,255,176,.35); }
-.caja p { color: #9fbfae; line-height: 1.6; font-size: 14px; margin: 0 auto 28px; max-width: 48ch; }
-.caja button { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: .2em; color: #001a0b; background: var(--g); border: 0; padding: 16px 28px; cursor: pointer; box-shadow: 0 0 30px rgba(125,255,176,.35); }
-.caja button:hover { filter: brightness(1.1); }
-.caja button:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
-.caja .seg { margin-top: 26px; font-size: 11px; letter-spacing: .14em; color: var(--a); }
-#estado { margin-top: 16px; font-size: 12px; letter-spacing: .1em; min-height: 1.4em; color: #9fbfae; }
+.vineta { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.72)); }
+
+#inicio { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at 50% 38%, #1a1b1f, #000 70%); }
+.caja { max-width: 560px; text-align: center; }
+.caja svg { width: 92px; height: auto; filter: drop-shadow(0 0 22px rgba(159,240,255,.25)); }
+.caja h1 { font-weight: 200; font-size: clamp(52px, 9vw, 96px); line-height: 1; letter-spacing: -.02em; margin: 26px 0 0; }
+.caja .sub { color: var(--gris); font-size: 15px; margin: 10px 0 0; }
+.caja p { color: var(--gris); line-height: 1.65; font-size: 16px; margin: 26px auto 34px; max-width: 46ch; }
+.caja button { font: 500 15px "Montserrat", sans-serif; color: #0a0a0b; background: var(--arena); border: 0; border-radius: 999px; padding: 16px 34px; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+.caja button:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(242,239,233,.18); }
+.caja button:disabled { opacity: .6; cursor: default; transform: none; }
+.caja button:focus-visible { outline: 2px solid var(--aliado); outline-offset: 4px; }
+#estado { margin-top: 18px; font-size: 14px; min-height: 1.5em; color: var(--gris); }
+#estado.error { color: #ff9a3c; }
+.caja .seg { margin-top: 30px; font-size: 13px; color: #7d828a; }
 .oculto { display: none !important; }
 </style>
 </head>
@@ -31,39 +36,43 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color:
 <video id="video" class="fondo oculto espejo" playsinline muted></video>
 <canvas id="falso" class="fondo oculto espejo" width="1280" height="720"></canvas>
 <canvas id="hud"></canvas>
-<div class="scan" aria-hidden="true"></div>
+<div class="vineta" aria-hidden="true"></div>
 
 <div id="inicio">
   <div class="caja">
-    <small>MONTALVO DYNAMICS · FUTURO DESARROLLO</small>
-    <h1>MIRA S-01</h1>
-    <p>Demo de software: detecta y sigue a las personas frente a la cámara y reconoce a tu equipo por su uniforme (polera negra + jean negro). Si apuntas a un aliado, el disparo queda bloqueado.</p>
-    <button id="arrancar" type="button">INICIAR CÁMARA</button>
+    <svg viewBox="0 0 1000 946" aria-hidden="true"><defs><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb3e6"/><stop offset=".35" stop-color="#9ff0ff"/><stop offset=".65" stop-color="#fff2a8"/><stop offset="1" stop-color="#b9a6ff"/></linearGradient></defs><polygon points="0,222 84.3,583.2 383.7,946 248.4,515.6" fill="url(#ir)"/><polygon points="91.4,0 234.9,388.4 481.1,624 394.9,332.5" fill="url(#ir)"/><polygon points="1000,222 915.7,583.2 616.3,946 751.6,515.6" fill="url(#ir)"/><polygon points="908.6,0 765.1,388.4 518.9,624 605.1,332.5" fill="url(#ir)"/></svg>
+    <h1>Mira S-01</h1>
+    <div class="sub">Montalvo Dynamics · futuro desarrollo</div>
+    <p>Detecta a cada persona frente a la cámara y reconoce a tu equipo por su uniforme: polera negra y jean negro. Si apuntas a un aliado, el disparo queda bloqueado.</p>
+    <button id="arrancar" type="button">Iniciar cámara</button>
     <div id="estado" role="status"></div>
-    <div class="seg">SOLO VISUALIZA · NO CONTROLA NINGÚN EQUIPO · NUNCA DISPARA</div>
+    <div class="seg">Demo de software. Solo muestra información y nunca dispara.</div>
   </div>
 </div>
 
 <script type="module">
 /* ============================================================
-   MIRA S-01 · demo de visión por computadora (Montalvo Dynamics)
+   MIRA S-01 · demo de vision por computadora (Montalvo Dynamics)
    - Detecta hasta 5 personas con MediaPipe Pose Landmarker.
    - Aliado = torso Y piernas predominantemente negros (polera + jean negro).
-   - Solo dibuja información. No controla ningún dispositivo.
-   Teclas: R registrar aliado · [ ] umbral · M espejo · C cambiar cámara
-           F pantalla completa · D diagnóstico · H ocultar ayuda
+   - Solo dibuja informacion. No controla ningun dispositivo.
+   Teclas: R registrar uniforme · [ ] sensibilidad · M espejo · C camara
+           F pantalla completa · D diagnostico · H ocultar ayuda
    ============================================================ */
 const CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 const MODELO_LOCAL = './modelos/pose_landmarker_lite.task';
 const MODELO_WEB = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
 const HFOV = 65;                      // campo de vision horizontal tipico de webcam de laptop (grados)
 const HOMBROS_M = 0.38;               // ancho de hombros promedio (m) para estimar distancia
-const G = '#7dffb0', A = '#ffb020', C = '#58d6ff', W_ = '#e9fff2';
+const ARENA = '#f2efe9', GRIS = '#a2a7ae', ALI = '#9fe6ff', OPO = '#ff8a1e', VIDRIO = 'rgba(12,12,14,.58)', BORDE = 'rgba(255,255,255,.14)';
+const FUENTE = '"Montserrat", "Helvetica Neue", Arial, sans-serif';
+const LOGO = [[0,222,84.3,583.2,383.7,946,248.4,515.6],[91.4,0,234.9,388.4,481.1,624,394.9,332.5],[1000,222,915.7,583.2,616.3,946,751.6,515.6],[908.6,0,765.1,388.4,518.9,624,605.1,332.5]];
+const HUESOS = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
 const prueba = new URLSearchParams(location.search).has('prueba');
 
 const $ = id => document.getElementById(id);
 const video = $('video'), falso = $('falso'), hud = $('hud'), ctx = hud.getContext('2d');
-const S = { tracks: [], sigId: 1, thrY: 72, thrC: 50, espejo: true, ayuda: true, diag: false, calib: null, fps: 0, msg: null, camaras: [], camIdx: 0, stream: null };
+const S = { tracks: [], sigId: 1, thrY: 72, thrC: 50, espejo: true, ayuda: false, diag: false, calib: null, fps: 0, msg: null, camaras: [], camIdx: 0, stream: null, abre: 0, anillo: 0 };
 
 /* ---------- fuente de imagen (camara real o escena de prueba) ---------- */
 let fuente = null, detector = null;
@@ -103,6 +112,8 @@ function poseFalsa(p, t) {
   const a = Array.from({ length: 33 }, () => L(cx, top + .3 * h));
   a[0] = L(cx, top + .07 * h);
   a[11] = L(cx + .1 * h, top + .2 * h); a[12] = L(cx - .1 * h, top + .2 * h);
+  a[13] = L(cx + .13 * h, top + .36 * h); a[14] = L(cx - .13 * h, top + .36 * h);
+  a[15] = L(cx + .14 * h, top + .5 * h); a[16] = L(cx - .14 * h, top + .5 * h);
   a[23] = L(cx + .065 * h, top + .52 * h); a[24] = L(cx - .065 * h, top + .52 * h);
   a[25] = L(cx + .07 * h, top + .75 * h); a[26] = L(cx - .07 * h, top + .75 * h);
   a[27] = L(cx + .07 * h, top + .97 * h); a[28] = L(cx - .07 * h, top + .97 * h);
@@ -115,6 +126,8 @@ function pintarFalso(t) {
   FALSAS.forEach(p => { const L = poseFalsa(p, t), X = q => q.x * w, Y = q => q.y * hh, h = p.h * hh;
     c.fillStyle = p.pan; c.fillRect(X(L[24]) - h * .05, Y(L[24]), X(L[23]) - X(L[24]) + h * .1, Y(L[27]) - Y(L[24]));
     c.fillStyle = p.cam; c.fillRect(X(L[12]) - h * .02, Y(L[12]) - h * .02, X(L[11]) - X(L[12]) + h * .04, Y(L[24]) - Y(L[12]) + h * .04);
+    c.strokeStyle = p.cam; c.lineWidth = h * .05; c.lineCap = 'round';
+    [[11, 13, 15], [12, 14, 16]].forEach(([a, b, d]) => { c.beginPath(); c.moveTo(X(L[a]), Y(L[a])); c.lineTo(X(L[b]), Y(L[b])); c.lineTo(X(L[d]), Y(L[d])); c.stroke(); });
     c.fillStyle = '#c69c7d'; c.beginPath(); c.arc(X(L[0]), Y(L[0]), h * .065, 0, 7); c.fill(); });
 }
 
@@ -124,12 +137,12 @@ function leerPixeles() {
   SW = 192; SH = Math.round(192 * h / w); if (muestra.width !== SW) { muestra.width = SW; muestra.height = SH; }
   mctx.drawImage(fuente.el, 0, 0, SW, SH); pix = mctx.getImageData(0, 0, SW, SH).data; return true;
 }
-function px(x, y) {                     // x,y normalizados -> [Y, croma] o null
+function px(x, y) {                     // x,y normalizados -> [Y, croma]
   const i = ((Math.min(SH - 1, Math.max(0, y * SH | 0))) * SW + Math.min(SW - 1, Math.max(0, x * SW | 0))) * 4;
   const r = pix[i], g = pix[i + 1], b = pix[i + 2];
   return [.299 * r + .587 * g + .114 * b, Math.max(r, g, b) - Math.min(r, g, b)];
 }
-function cuad(q, n = 7) {               // q = [hombroI, hombroD, caderaD, caderaI]; muestreo encogido al centro
+function cuad(q, n = 7) {               // q = [hombroD, hombroI, caderaI, caderaD]; muestreo encogido al centro
   const cx = (q[0].x + q[1].x + q[2].x + q[3].x) / 4, cy = (q[0].y + q[1].y + q[2].y + q[3].y) / 4;
   const k = .7, P = q.map(p => ({ x: cx + (p.x - cx) * k, y: cy + (p.y - cy) * k })), out = [];
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const u = (i + .5) / n, v = (j + .5) / n;
@@ -149,7 +162,7 @@ function analizar(L) {
   y0 -= hom * .45; x0 -= hom * .25; x1 += hom * .25; y1 += hom * .08;
   const d = { box: [Math.max(0, x0), Math.max(0, y0), Math.min(1, x1), Math.min(1, y1)], hom, L, torso: null, piernas: null, mT: [], mP: [] };
   if (vis(L[23], L[24])) { d.mT = cuad([L[12], L[11], L[23], L[24]]); d.torso = fracNegro(d.mT); }
-  else { const fake = [L[12], L[11], { x: L[11].x, y: L[11].y + hom * 1.2 }, { x: L[12].x, y: L[12].y + hom * 1.2 }]; d.mT = cuad(fake); d.torso = fracNegro(d.mT); }
+  else { const est = [L[12], L[11], { x: L[11].x, y: L[11].y + hom * 1.2 }, { x: L[12].x, y: L[12].y + hom * 1.2 }]; d.mT = cuad(est); d.torso = fracNegro(d.mT); }
   if (vis(L[23], L[25]) || vis(L[24], L[26])) {
     if (vis(L[23], L[25])) d.mP.push(...seg(L[23], L[25])); if (vis(L[24], L[26])) d.mP.push(...seg(L[24], L[26]));
     if (vis(L[25], L[27])) d.mP.push(...seg(L[25], L[27])); if (vis(L[26], L[28])) d.mP.push(...seg(L[26], L[28]));
@@ -172,6 +185,7 @@ function asociar(dets, t) {
 }
 function actualizar(tr, d, t) {
   tr.box = tr.box.map((v, k) => v + (d.box[k] - v) * .55); tr.d = d; tr.visto = t;
+  tr.Ls = tr.Ls ? tr.Ls.map((p, k) => ({ x: p.x + (d.L[k].x - p.x) * .6, y: p.y + (d.L[k].y - p.y) * .6, visibility: d.L[k].visibility })) : d.L.map(p => ({ ...p }));
   const conPiernas = d.piernas !== null;
   const aliado = conPiernas ? (d.torso > .55 && d.piernas > .5) : d.torso > .62;
   tr.score += ((aliado ? 1 : 0) - tr.score) * (conPiernas ? .14 : .07);
@@ -182,7 +196,6 @@ function actualizar(tr, d, t) {
   tr.conf = tr.estado === 'ALIADO' ? tr.score : 1 - tr.score;
   const fpx = fuente.w() / (2 * Math.tan(HFOV * Math.PI / 360));
   const hpx = d.hom * fuente.w(); tr.dist = hpx > 4 ? HOMBROS_M * fpx / hpx : null;
-  tr.rumbo = ((tr.box[0] + tr.box[2]) / 2 - .5) * HFOV * (S.espejo ? -1 : 1);
   tr.parcial = !conPiernas;
 }
 
@@ -194,11 +207,11 @@ function calibrar(t) {
   if (c.fase === 'muestra') {
     const tr = objetivo(); if (tr && tr.d) { [...tr.d.mT, ...tr.d.mP].forEach(([y, ch]) => { c.Y.push(y); c.C.push(ch); }); c.id = tr.id; }
     if (t - c.t1 > 1200) {
-      if (c.Y.length < 40) { aviso('SIN PERSONA AL CENTRO · REPITE CON [R]', A, t); S.calib = null; return; }
+      if (c.Y.length < 40) { aviso('No hay nadie en el centro de la mira. Presiona R para repetir.', OPO, t); S.calib = null; return; }
       S.thrY = Math.round(Math.min(140, Math.max(40, pct(c.Y, .7) * 1.25 + 12)));
       S.thrC = Math.round(Math.min(90, Math.max(30, pct(c.C, .7) * 1.3 + 10)));
       const tr2 = S.tracks.find(x => x.id === c.id); if (tr2) { tr2.score = 1; tr2.estado = 'ALIADO'; }
-      aviso('UNIFORME ALIADO REGISTRADO · UMBRAL ' + S.thrY, C, t); S.calib = null;
+      aviso('Uniforme aliado registrado', ALI, t); S.calib = null;
     }
   }
 }
@@ -206,6 +219,7 @@ function aviso(txt, col, t) { S.msg = { txt, col, t }; }
 
 /* objetivo = persona bajo la reticula (centro de la pantalla) */
 function objetivo() {
+  if (!fuente) return null;
   const m = mapa(), cx = m.W / 2, cy = m.H / 2; let mejor = null, md = 1e9;
   for (const tr of S.tracks) { const [a, b] = caja(tr.box, m); if (cx >= a.x && cx <= b.x && cy >= a.y && cy <= b.y) { const d = Math.hypot((a.x + b.x) / 2 - cx, (a.y + b.y) / 2 - cy); if (d < md) { md = d; mejor = tr; } } }
   return mejor;
@@ -216,103 +230,118 @@ function mapa() { const W = innerWidth, H = innerHeight, vw = fuente.w() || 1280
 function pt(x, y, m) { let X = x * m.vw * m.s + m.ox; if (S.espejo) X = m.W - X; return { x: X, y: y * m.vh * m.s + m.oy }; }
 function caja(b, m) { const p = pt(b[0], b[1], m), q = pt(b[2], b[3], m); return [{ x: Math.min(p.x, q.x), y: p.y }, { x: Math.max(p.x, q.x), y: q.y }]; }
 
-/* ---------- dibujo del HUD ---------- */
-function tx(s, x, y, col = G, sz = 13, al = 'left', peso = 500) { ctx.font = `${peso} ${sz}px "IBM Plex Mono", monospace`; ctx.textAlign = al; ctx.fillStyle = col; ctx.fillText(s, x, y); }
-function linea(pts, col = G, w = 1.6, dash = []) { ctx.beginPath(); ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = w; pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]); }
-function esquinas(a, b, col, dash = []) { const L = Math.min(26, (b.x - a.x) * .25);
-  linea([[a.x, a.y + L], [a.x, a.y], [a.x + L, a.y]], col, 2.2, dash); linea([[b.x - L, a.y], [b.x, a.y], [b.x, a.y + L]], col, 2.2, dash);
-  linea([[b.x, b.y - L], [b.x, b.y], [b.x - L, b.y]], col, 2.2, dash); linea([[a.x + L, b.y], [a.x, b.y], [a.x, b.y - L]], col, 2.2, dash); }
+/* ---------- primitivas de dibujo ---------- */
+const nf = (v, d = 1) => v.toFixed(d).replace('.', ',');
+const id2 = n => String(n).padStart(2, '0');
+function tx(s, x, y, col = ARENA, sz = 14, al = 'left', peso = 400) { ctx.shadowColor = 'rgba(0,0,0,.75)'; ctx.shadowBlur = 8; ctx.font = `${peso} ${sz}px ${FUENTE}`; ctx.textAlign = al; ctx.fillStyle = col; ctx.fillText(s, x, y); return ctx.measureText(s).width; }
+function ancho(s, sz, peso = 400) { ctx.font = `${peso} ${sz}px ${FUENTE}`; return ctx.measureText(s).width; }
+function linea(pts, col, w = 1.2, alfa = 1, dash = []) { ctx.save(); ctx.globalAlpha = alfa; ctx.beginPath(); ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = w; pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.restore(); }
+function vidrio(x, y, w, h, r) { ctx.save(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fillStyle = VIDRIO; ctx.fill(); ctx.strokeStyle = BORDE; ctx.lineWidth = 1; ctx.stroke(); ctx.restore(); }
+function iri(x0, y0, x1, y1) { const g = ctx.createLinearGradient(x0, y0, x1, y1); [[0, '#ffb3e6'], [.35, '#9ff0ff'], [.65, '#fff2a8'], [1, '#b9a6ff']].forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function cristal(cx, cy, s, abre, estilo) {    // el logo de 4 cristales; abre = separacion hacia afuera
+  const k = s / 1000;
+  LOGO.forEach((p, i) => { const dx = (i < 2 ? -1 : 1) * abre, dy = (i % 2 ? -1 : 1) * abre * .5;
+    ctx.beginPath(); for (let j = 0; j < 8; j += 2) { const X = cx + (p[j] - 500) * k + dx, Y = cy + (p[j + 1] - 473) * k + dy; j ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); } ctx.closePath();
+    if (estilo.relleno) { ctx.fillStyle = estilo.relleno; ctx.fill(); } if (estilo.trazo) { ctx.strokeStyle = estilo.trazo; ctx.lineWidth = estilo.w || 1.5; ctx.stroke(); } });
+}
+function candado(x, y, col) { ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(x - 11, y - 6, 22, 17, 3); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y - 6, 6.5, Math.PI, 0); ctx.stroke(); ctx.restore(); }
+function tecla(x, y, k, txt) { ctx.save(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.roundRect(x, y - 15, 22, 22, 5); ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.stroke(); ctx.restore(); tx(k, x + 11, y + 1, ARENA, 11, 'center', 600); return 22 + 8 + tx(txt, x + 30, y + 1, GRIS, 12) + 22; }
+
+/* ---------- HUD ---------- */
+function persona(tr, m, W, enMira) {
+  const col = tr.estado === 'ALIADO' ? ALI : tr.estado === 'ANALIZANDO' ? ARENA : OPO;
+  const alfa = tr.estado === 'ANALIZANDO' ? .45 : .8, L = tr.Ls;
+  // esqueleto
+  HUESOS.forEach(([a, b]) => { if (vis(L[a], L[b])) { const p = pt(L[a].x, L[a].y, m), q = pt(L[b].x, L[b].y, m); linea([[p.x, p.y], [q.x, q.y]], col, 1.2, alfa); } });
+  ctx.fillStyle = col; ctx.globalAlpha = alfa + .15;
+  [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].forEach(k => { if (vis(L[k])) { const p = pt(L[k].x, L[k].y, m); ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, 7); ctx.fill(); } });
+  ctx.globalAlpha = 1;
+  // esquinas finas del recuadro
+  const [a, b] = caja(tr.box, m), E = Math.min(16, (b.x - a.x) * .2);
+  [[a.x, a.y, 1, 1], [b.x, a.y, -1, 1], [b.x, b.y, -1, -1], [a.x, b.y, 1, -1]].forEach(([x, y, dx, dy]) => linea([[x, y + dy * E], [x, y], [x + dx * E, y]], col, 1.4, tr.estado === 'ANALIZANDO' ? .3 : .55));
+  // linea guia desde el hombro exterior hacia afuera de la pantalla
+  const hI = pt(L[11].x, L[11].y, m), hD = pt(L[12].x, L[12].y, m), cxp = (a.x + b.x) / 2, dir = cxp < W / 2 ? -1 : 1;
+  const h0 = dir < 0 ? (hI.x < hD.x ? hI : hD) : (hI.x > hD.x ? hI : hD);
+  const nom = tr.estado === 'ALIADO' ? `Aliado ${id2(tr.id)}` : tr.estado === 'OPONENTE' ? `Oponente ${id2(tr.id)}` : tr.estado === 'DESCONOCIDO' ? `Sin identificar ${id2(tr.id)}` : 'Analizando';
+  const sub = tr.estado === 'ANALIZANDO' ? '' : (tr.dist ? `${nf(tr.dist)} m` : '') + `     ${Math.round(tr.conf * 100)} %` + (tr.parcial ? '     parcial' : '');
+  const lw = Math.max(ancho(nom, 15, 500), ancho(sub, 12)) + 12;
+  let ex = h0.x + dir * 48, ey = Math.max(96, h0.y - 48);
+  ex = Math.min(W - lw - 24, Math.max(lw + 24, ex));
+  const fx = ex + dir * lw;
+  if (enMira) return;
+  linea([[h0.x, h0.y], [ex, ey], [fx, ey]], col, 1, alfa);
+  const al = dir > 0 ? 'left' : 'right', tx0 = ex + dir * 6;
+  tx(nom, tx0, ey - 9, col, 15, al, 500);
+  if (sub) tx(sub, tx0, ey + 19, ARENA, 12, al);
+  if (S.diag && tr.d) { const d = tr.d, q = [d.L[12], d.L[11], d.L[23], d.L[24]].map(p => pt(p.x, p.y, m));
+    linea([...q.map(p => [p.x, p.y]), [q[0].x, q[0].y]], '#ffffff', 1, .6, [3, 3]);
+    tx(`Torso ${d.torso * 100 | 0} %   Piernas ${d.piernas === null ? '–' : (d.piernas * 100 | 0) + ' %'}`, tx0, ey + 37, GRIS, 11, al); }
+}
 
 function dibujar(t) {
   const dpr = Math.min(devicePixelRatio || 1, 2), W = innerWidth, H = innerHeight;
   if (hud.width !== W * dpr || hud.height !== H * dpr) { hud.width = W * dpr; hud.height = H * dpr; }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-  ctx.shadowColor = 'rgba(125,255,176,.55)'; ctx.shadowBlur = 6;
-  const m = mapa(), cx = W / 2, cy = H / 2, u = Math.min(W, H) / 900;
-  const obj = objetivo();
+  const m = mapa(), cx = W / 2, cy = H / 2, u = Math.max(.75, Math.min(1.25, Math.min(W, H) / 900));
+  const obj = objetivo(), bloq = obj && obj.estado === 'ALIADO', marca = obj && (obj.estado === 'OPONENTE' || obj.estado === 'DESCONOCIDO');
+  ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 6;
 
-  /* personas */
-  for (const tr of S.tracks) {
-    const [a, b] = caja(tr.box, m), col = tr.estado === 'ALIADO' ? C : tr.estado === 'OPONENTE' ? A : tr.estado === 'DESCONOCIDO' ? A : G;
-    ctx.shadowColor = col;
-    esquinas(a, b, col, tr.estado === 'ANALIZANDO' ? [6, 5] : []);
-    const id = 'ID ' + String(tr.id).padStart(2, '0');
-    const nom = tr.estado === 'ALIADO' ? 'ALIADO' : tr.estado === 'OPONENTE' ? 'OPONENTE' : tr.estado === 'DESCONOCIDO' ? 'DESCONOCIDO' : 'ANALIZANDO…';
-    tx(`${id} · ${nom}`, a.x, Math.max(84, a.y - 10), col, 13 * Math.max(.85, u), 'left', 600);
-    const dist = tr.dist ? tr.dist.toFixed(1) + ' m' : '-- m';
-    const sub = tr.estado === 'ALIADO' ? 'FUEGO BLOQUEADO' : tr.estado === 'ANALIZANDO' ? dist : `${dist} · ${Math.round(tr.conf * 100)}%`;
-    const ys = a.y + 22;
-    tx(sub + (tr.parcial && tr.estado !== 'ANALIZANDO' ? ' · PARCIAL' : ''), a.x + 10, ys, col, 12 * Math.max(.85, u));
-    if (tr.estado === 'OPONENTE' && tr.d) { const p = pt((tr.d.L[11].x + tr.d.L[12].x) / 2, (tr.d.L[11].y + tr.d.L[23].y) / 2, m), r = 7;
-      linea([[p.x, p.y - r], [p.x + r, p.y], [p.x, p.y + r], [p.x - r, p.y], [p.x, p.y - r]], A, 1.8); }
-    if (tr.estado === 'ALIADO') { const p = { x: b.x - 16, y: a.y + 16 };     // escudo
-      linea([[p.x - 7, p.y - 7], [p.x + 7, p.y - 7], [p.x + 7, p.y + 1], [p.x, p.y + 8], [p.x - 7, p.y + 1], [p.x - 7, p.y - 7]], C, 1.6); }
-    if (S.diag && tr.d) { const d = tr.d, q = [d.L[12], d.L[11], d.L[23], d.L[24]].map(p => pt(p.x, p.y, m));
-      linea([...q.map(p => [p.x, p.y]), [q[0].x, q[0].y]], '#ffffff88', 1, [3, 3]);
-      tx(`T ${(d.torso * 100 | 0)}%  P ${d.piernas === null ? '--' : (d.piernas * 100 | 0) + '%'}  S ${tr.score.toFixed(2)}`, a.x + 10, ys + 16, '#ffffffcc', 11); }
-  }
-  ctx.shadowColor = 'rgba(125,255,176,.55)';
+  for (const tr of S.tracks) persona(tr, m, W, tr === obj);
 
-  /* cinta de rumbo (arriba): 0 = centro de la camara; marca el rumbo del objetivo */
-  const tw = Math.min(560, W * .5), ty = 54 * Math.max(.8, u);
-  for (let g = -35; g <= 35; g += 5) { const x = cx + g / 35 * tw / 2; linea([[x, ty], [x, ty + (g % 10 ? 8 : 14)]], G, 1.4);
-    if (g % 10 === 0) tx(String((g + 360) % 360).padStart(3, '0'), x, ty - 8, G, 11, 'center'); }
-  linea([[cx - 6, ty + 26], [cx, ty + 19], [cx + 6, ty + 26]], G, 1.6);
-  if (obj) { const x = cx + Math.max(-35, Math.min(35, obj.rumbo)) / 35 * tw / 2, col = obj.estado === 'ALIADO' ? C : A; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, ty + 18); ctx.lineTo(x - 6, ty + 30); ctx.lineTo(x + 6, ty + 30); ctx.fill(); }
+  // marcador de horizonte
+  [-1, 1].forEach(s => linea([[cx + s * 120 * u, cy], [cx + s * 250 * u, cy], [cx + s * 250 * u, cy + 8]], ARENA, 1, .5));
 
-  /* escalera de cabeceo */
-  const esc = 150 * u;
-  [-2, -1, 1, 2].forEach(k => { const y = cy + k * esc * .55, w1 = 70 * u, gap = 120 * u, dash = k > 0 ? [7, 5] : [];
-    linea([[cx - gap - w1, y], [cx - gap, y], [cx - gap, y + (k < 0 ? 8 : -8)]], G, 1.3, dash);
-    linea([[cx + gap + w1, y], [cx + gap, y], [cx + gap, y + (k < 0 ? 8 : -8)]], G, 1.3, dash);
-    tx(String(Math.abs(k) * 10), cx - gap - w1 - 8, y + 4, G, 10, 'right'); tx(String(Math.abs(k) * 10), cx + gap + w1 + 8, y + 4, G, 10, 'left'); });
-
-  /* reticula */
-  const bloqueado = obj && obj.estado === 'ALIADO', marcado = obj && obj.estado === 'OPONENTE';
-  const rc = bloqueado ? C : marcado ? A : G, R = 44 * u + 8;
-  ctx.shadowColor = rc; ctx.save(); ctx.translate(cx, cy);
-  if (!obj) ctx.rotate(t / 1000 * .5);
-  ctx.beginPath(); ctx.strokeStyle = rc; ctx.lineWidth = 1.8; ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.stroke();
-  for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6, r2 = k % 3 ? R + 8 : R + 16; linea([[Math.cos(a) * R, Math.sin(a) * R], [Math.cos(a) * r2, Math.sin(a) * r2]], rc, 1.6); }
+  // reticula: el cristal del logo; se abre y muestra un candado cuando hay un aliado en la mira
+  S.abre += ((bloq ? 14 : 0) - S.abre) * .18; S.anillo += ((obj ? 1 : 0) - S.anillo) * .15;
+  const R = 70 * u, colR = bloq ? ALI : marca ? OPO : ARENA;
+  ctx.save(); ctx.shadowColor = bloq ? 'rgba(159,230,255,.6)' : 'rgba(159,240,255,.35)'; ctx.shadowBlur = 14;
+  cristal(cx, cy, 92 * u, S.abre * u, { trazo: iri(cx - 50, cy - 50, cx + 50, cy + 50), w: 1.6 });
   ctx.restore();
-  if (bloqueado) { const k = R * .55; linea([[cx - k, cy - k], [cx + k, cy + k]], C, 2.6); linea([[cx + k, cy - k], [cx - k, cy + k]], C, 2.6); }
-  else { ctx.fillStyle = rc; ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, 7); ctx.fill(); }
-  if (marcado) { const s = R + 26 + Math.sin(t / 120) * 3; linea([[cx, cy - s], [cx + s, cy], [cx, cy + s], [cx - s, cy], [cx, cy - s]], A, 1.6); }
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(obj ? 0 : t / 1000 * .25);
+  ctx.beginPath(); ctx.strokeStyle = colR; ctx.lineWidth = obj ? 1.6 : 1; ctx.setLineDash(obj ? [] : [2, 7]); ctx.globalAlpha = obj ? .95 : .7; ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  if (obj) [0, 1, 2, 3].forEach(k => { const a = k * Math.PI / 2; linea([[cx + Math.cos(a) * (R + 8), cy + Math.sin(a) * (R + 8)], [cx + Math.cos(a) * (R + 20), cy + Math.sin(a) * (R + 20)]], colR, 1.6, S.anillo); });
+  if (bloq) candado(cx, cy + 2, ALI);
 
-  /* cintas laterales: distancia y confianza del objetivo (valores calculados) */
-  const th = 300 * u + 60, tyy = cy - th / 2, lx = Math.max(24, W * .035), rx = W - Math.max(24, W * .035) - 74;
-  [[lx, 'DIST', obj && obj.dist ? obj.dist.toFixed(1) : '--', 'M'], [rx, 'CONF', obj ? String(Math.round(obj.conf * 100)) : '--', '%']].forEach(([x, nom, val, un], i) => {
-    ctx.strokeStyle = G; ctx.lineWidth = 1.3; ctx.strokeRect(x, tyy, 74, th);
-    for (let k = 1; k < 12; k++) { const y = tyy + k * th / 12; linea(i ? [[x, y], [x + (k % 3 ? 8 : 16), y]] : [[x + 74, y], [x + 74 - (k % 3 ? 8 : 16), y]], G, 1.2); }
-    ctx.fillStyle = '#000c'; ctx.fillRect(x - 10, cy - 16, 94, 32); ctx.strokeRect(x - 10, cy - 16, 94, 32);
-    tx(val, x + 37, cy + 6, W_, 18, 'center', 600); tx(nom + ' ' + un, x + 37, tyy - 10, G, 11, 'center'); });
+  // lecturas junto a la reticula
+  const dist = obj && obj.dist ? nf(obj.dist) : '–', conf = obj ? String(Math.round(obj.conf * 100)) : '–';
+  tx(dist, cx - 290 * u, cy - 6, ARENA, 34 * u, 'right', 300); tx('metros', cx - 290 * u, cy + 18, GRIS, 12, 'right');
+  tx(conf, cx + 290 * u, cy - 6, ARENA, 34 * u, 'left', 300); tx('% de confianza', cx + 290 * u, cy + 18, GRIS, 12, 'left');
 
-  /* banner central */
-  if (bloqueado && Math.floor(t / 380) % 2 === 0 || bloqueado && S.estatico) {
-    const bw = 340, bh = 58, bx = cx - bw / 2, by = cy + R + 40;
-    ctx.shadowColor = C; ctx.fillStyle = 'rgba(0,20,30,.72)'; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = C; ctx.lineWidth = 2; ctx.strokeRect(bx, by, bw, bh);
-    tx('FUEGO BLOQUEADO', cx, by + 27, C, 20, 'center', 600); tx('ALIADO ID ' + String(obj.id).padStart(2, '0') + ' EN LA MIRA', cx, by + 46, C, 11, 'center'); }
-  else if (marcado) tx('OBJETIVO ID ' + String(obj.id).padStart(2, '0') + ' · DECISIÓN DEL TIRADOR', cx, cy + R + 60, A, 13, 'center', 600);
-  ctx.shadowColor = 'rgba(125,255,176,.55)';
+  // estado central
+  const yE = cy + R + 58 * u;
+  if (bloq) { tx('Fuego bloqueado', cx, yE, ALI, 26 * u, 'center', 300); tx(`Aliado ${id2(obj.id)} en la mira`, cx, yE + 24, GRIS, 13, 'center'); }
+  else if (marca) { tx(`${obj.estado === 'OPONENTE' ? 'Oponente' : 'Sin identificar'} ${id2(obj.id)} en la mira`, cx, yE, OPO, 22 * u, 'center', 300); tx('La decisión es del tirador', cx, yE + 24, GRIS, 13, 'center'); }
 
-  /* textos de estado */
-  const aliados = S.tracks.filter(x => x.estado === 'ALIADO').length;
-  tx('MIRA S-01 · DEMO DE SOFTWARE', 24, 32, G, 13, 'left', 600);
-  tx('IFF: UNIFORME NEGRO (POLERA + JEAN) · UMBRAL ' + S.thrY, 24, 50, G, 11);
-  const d = new Date(), hh = [d.getHours(), d.getMinutes(), d.getSeconds()].map(n => String(n).padStart(2, '0')).join(':');
-  tx(hh, W - 24, 32, G, 13, 'right', 600); tx(`${S.fps | 0} FPS${prueba ? ' · ESCENA DE PRUEBA' : ''}`, W - 24, 50, G, 11, 'right');
-  tx('MODO ENTRENAMIENTO · SEGURO DE ALIADOS ACTIVO', cx, H - 46, G, 13, 'center', 600);
-  tx(`PERSONAS ${S.tracks.length} · ALIADOS ${aliados} · OPONENTES ${S.tracks.filter(x => x.estado === 'OPONENTE').length}`, cx, H - 26, G, 11, 'center');
-  tx('SOLO VISUALIZA · NUNCA DISPARA', W - 24, H - 26, A, 11, 'right', 600);
-  if (S.ayuda) { tx('[R] REGISTRAR ALIADO · [ ] UMBRAL · [M] ESPEJO', 24, H - 46, '#9fbfae', 10.5); tx('[C] CÁMARA · [F] PANTALLA · [D] DIAGNÓSTICO · [H] OCULTAR', 24, H - 26, '#9fbfae', 10.5); }
+  // esquina superior izquierda: marca
+  ctx.shadowBlur = 0; cristal(44, 44, 34, 0, { relleno: iri(27, 27, 61, 61) });
+  tx('Mira S-01', 72, 42, ARENA, 15, 'left', 500); tx('Modo entrenamiento', 72, 60, GRIS, 12);
+  // esquina superior derecha: hora
+  const d = new Date(); tx([d.getHours(), d.getMinutes()].map(n => String(n).padStart(2, '0')).join(':'), W - 32, 50, ARENA, 22, 'right', 300);
+  if (S.diag) tx(`${S.fps | 0} fps   sensibilidad ${S.thrY}`, W - 32, 72, GRIS, 12, 'right');
 
-  /* calibracion y avisos */
+  // contador inferior segmentado
+  const nA = S.tracks.filter(x => x.estado === 'ALIADO').length, nO = S.tracks.filter(x => x.estado === 'OPONENTE' || x.estado === 'DESCONOCIDO').length, nP = S.tracks.length;
+  const segs = [[nP, nP === 1 ? 'persona' : 'personas', ARENA], [nA, nA === 1 ? 'aliado' : 'aliados', ALI], [nO, nO === 1 ? 'oponente' : 'oponentes', OPO]];
+  const anchos = segs.map(([n, l]) => ancho(String(n), 24, 300) + 8 + ancho(l, 13) + 40);
+  const bw = anchos.reduce((a, b) => a + b, 0) + 16, bx = cx - bw / 2, by = H - 84;
+  vidrio(bx, by, bw, 52, 26);
+  let x = bx + 28;
+  segs.forEach(([n, l, c], i) => { if (i) linea([[x - 20, by + 15], [x - 20, by + 37]], '#ffffff', 1, .14);
+    const w1 = tx(String(n), x, by + 35, c, 24, 'left', 300); tx(l, x + w1 + 8, by + 34, GRIS, 13); x += anchos[i]; });
+
+  // seguridad y ayuda
+  tx('Solo muestra información.', W - 32, H - 50, GRIS, 12, 'right'); tx('Nunca dispara.', W - 32, H - 32, GRIS, 12, 'right');
+  if (S.ayuda) { const teclas = [['R', 'Registrar uniforme'], ['F', 'Pantalla completa'], ['M', 'Espejo'], ['C', 'Cambiar cámara'], ['D', 'Diagnóstico'], ['[ ]', 'Sensibilidad'], ['H', 'Ocultar esta ayuda']];
+    vidrio(24, H - 40 - teclas.length * 30, 228, teclas.length * 30 + 18, 16); teclas.forEach(([k, l], i) => tecla(40, H - 40 - teclas.length * 30 + 30 + i * 30, k, l)); }
+  else tecla(32, H - 38, 'H', 'Ayuda');
+
+  // calibracion y avisos
   if (S.calib) { const c = S.calib, n = c.fase === 'cuenta' ? Math.ceil((3000 - (t - c.t0)) / 1000) : null;
-    ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(cx - 260, 96, 520, 74); ctx.strokeStyle = C; ctx.strokeRect(cx - 260, 96, 520, 74);
-    tx('REGISTRAR UNIFORME ALIADO', cx, 124, C, 15, 'center', 600);
-    tx(n ? `PÁRATE EN EL CENTRO DE LA MIRA · ${n}` : 'LEYENDO COLORES…', cx, 152, W_, 13, 'center'); }
-  else if (S.msg && t - S.msg.t < 3000) { tx(S.msg.txt, cx, 132, S.msg.col, 14, 'center', 600); }
-  ctx.shadowBlur = 0;
+    vidrio(cx - 220, 92, 440, 112, 22);
+    tx('Registrar uniforme aliado', cx, 128, ALI, 17, 'center', 500);
+    tx(n ? 'Párate en el centro de la mira' : 'Leyendo los colores del uniforme…', cx, 154, ARENA, 14, 'center');
+    if (n) tx(String(n), cx, 190, ARENA, 30, 'center', 200); }
+  else if (S.msg && t - S.msg.t < 3000) { const w = ancho(S.msg.txt, 14, 500) + 48; vidrio(cx - w / 2, 96, w, 44, 22); tx(S.msg.txt, cx, 123, S.msg.col, 14, 'center', 500); }
 }
 
 /* ---------- bucle ---------- */
@@ -326,46 +355,46 @@ function cuadro() {
   if (poses && leerPixeles()) { asociar(poses.map(analizar).filter(Boolean), t); }
   calibrar(t); dibujar(t);
   const dt = t - tPrev; tPrev = t; S.fps += ((1000 / Math.max(1, dt)) - S.fps) * .05;
-  if (!S.estatico) requestAnimationFrame(cuadro);
+  requestAnimationFrame(cuadro);
 }
 
 /* ---------- controles ---------- */
 addEventListener('keydown', e => {
-  const k = e.key.toLowerCase();
-  if (k === 'r') { S.calib = { fase: 'cuenta', t0: performance.now() }; }
-  else if (k === '[') { S.thrY = Math.max(30, S.thrY - 4); aviso('UMBRAL ' + S.thrY, G, performance.now()); }
-  else if (k === ']') { S.thrY = Math.min(160, S.thrY + 4); aviso('UMBRAL ' + S.thrY, G, performance.now()); }
+  const k = e.key.toLowerCase(), t = performance.now();
+  if (k === 'r') { S.calib = { fase: 'cuenta', t0: t }; }
+  else if (k === '[') { S.thrY = Math.max(30, S.thrY - 4); aviso('Sensibilidad al negro ' + S.thrY, ARENA, t); }
+  else if (k === ']') { S.thrY = Math.min(160, S.thrY + 4); aviso('Sensibilidad al negro ' + S.thrY, ARENA, t); }
   else if (k === 'm') { S.espejo = !S.espejo; video.classList.toggle('espejo', S.espejo); falso.classList.toggle('espejo', S.espejo); }
   else if (k === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); }
   else if (k === 'd') S.diag = !S.diag;
   else if (k === 'h') S.ayuda = !S.ayuda;
-  else if (k === 'c' && S.camaras.length > 1) { S.camIdx = (S.camIdx + 1) % S.camaras.length; iniciarCamara(S.camIdx).then(() => aviso('CÁMARA ' + (S.camIdx + 1) + '/' + S.camaras.length, G, performance.now())); }
+  else if (k === 'c' && S.camaras.length > 1) { S.camIdx = (S.camIdx + 1) % S.camaras.length; iniciarCamara(S.camIdx).then(() => aviso(`Cámara ${S.camIdx + 1} de ${S.camaras.length}`, ARENA, performance.now())); }
 });
 
 $('arrancar').addEventListener('click', async () => {
-  const est = $('estado'), b = $('arrancar'); b.disabled = true;
+  const est = $('estado'), b = $('arrancar'); b.disabled = true; est.classList.remove('error');
   try {
     if (prueba) { fuente = { el: falso, w: () => falso.width, h: () => falso.height }; falso.classList.remove('oculto'); }
     else {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Este navegador no permite usar la cámara aquí. Ábrelo en Chrome desde un enlace https.');
-      est.textContent = 'PIDIENDO PERMISO DE CÁMARA…';
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Este navegador no permite usar la cámara aquí. Abre la página en Chrome desde su enlace https.');
+      est.textContent = 'Esperando el permiso de la cámara…';
       await iniciarCamara();
       S.camaras = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
       video.classList.remove('oculto');
-      est.textContent = 'CARGANDO RED NEURONAL…';
+      est.textContent = 'Cargando la red neuronal…';
       detector = await cargarDetector();
     }
+    await document.fonts.ready;
     $('inicio').classList.add('oculto');
     requestAnimationFrame(cuadro);
   } catch (e) {
-    console.error(e); b.disabled = false;
-    est.style.color = A;
-    est.textContent = e.name === 'NotAllowedError' ? 'PERMISO DE CÁMARA DENEGADO · ACTÍVALO EN EL CANDADO DE LA BARRA DE DIRECCIÓN' :
-      e.name === 'NotFoundError' ? 'NO SE ENCONTRÓ NINGUNA CÁMARA' : 'ERROR: ' + (e.message || e);
+    console.error(e); b.disabled = false; est.classList.add('error');
+    est.textContent = e.name === 'NotAllowedError' ? 'El permiso de cámara está bloqueado. Actívalo en el candado de la barra de direcciones y vuelve a intentar.' :
+      e.name === 'NotFoundError' ? 'No se encontró ninguna cámara. Conecta una y vuelve a intentar.' : 'No se pudo iniciar: ' + (e.message || e);
   }
 });
-if (prueba) { const q = new URLSearchParams(location.search); if (q.has('aliado')) { FALSAS[0].x = .5; FALSAS[1].x = .27; } if (q.has('auto')) $('arrancar').click(); }
-window.__S = S; window.__cuadro = cuadro;
+if (prueba) { const q = new URLSearchParams(location.search); if (q.has('aliado')) { FALSAS[0].x = .5; FALSAS[1].x = .27; } if (q.has('diag')) { S.diag = true; S.ayuda = true; } if (q.has('auto')) $('arrancar').click(); }
+window.__S = S;
 </script>
 </body>
 </html>
