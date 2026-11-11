@@ -28,8 +28,8 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color:
 </style>
 </head>
 <body>
-<video id="video" class="fondo oculto" playsinline muted></video>
-<canvas id="falso" class="fondo oculto" width="1280" height="720"></canvas>
+<video id="video" class="fondo oculto espejo" playsinline muted></video>
+<canvas id="falso" class="fondo oculto espejo" width="1280" height="720"></canvas>
 <canvas id="hud"></canvas>
 <div class="scan" aria-hidden="true"></div>
 
@@ -63,7 +63,7 @@ const prueba = new URLSearchParams(location.search).has('prueba');
 
 const $ = id => document.getElementById(id);
 const video = $('video'), falso = $('falso'), hud = $('hud'), ctx = hud.getContext('2d');
-const S = { tracks: [], sigId: 1, thrY: 72, thrC: 50, espejo: false, ayuda: true, diag: false, calib: null, fps: 0, msg: null, camaras: [], camIdx: 0, stream: null };
+const S = { tracks: [], sigId: 1, thrY: 72, thrC: 50, espejo: true, ayuda: true, diag: false, calib: null, fps: 0, msg: null, camaras: [], camIdx: 0, stream: null };
 
 /* ---------- fuente de imagen (camara real o escena de prueba) ---------- */
 let fuente = null, detector = null;
