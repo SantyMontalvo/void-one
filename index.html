@@ -78,6 +78,7 @@ nav.solida { background: rgba(10,10,11,.78); backdrop-filter: blur(14px); -webki
 .specs div:first-child { border-left: 0; padding-left: 0; }
 .specs small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: #8a9099; }
 .specs b { display: block; font-family: var(--display); font-weight: 200; font-size: clamp(34px, 3.6vw, 52px); line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.specs b.palabra { font-size: clamp(24px, 2.3vw, 34px); line-height: calc(clamp(34px, 3.6vw, 52px) * 1.1); }
 .specs i { font-style: normal; font-size: 15px; color: #8a9099; margin-left: 5px; font-weight: 400; }
 .entra { animation: entra .9s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes entra { from { transform: translateY(18px); } to { transform: none; } }
@@ -140,12 +141,30 @@ section.bloque { padding: clamp(80px, 11vw, 150px) var(--gut) 0; }
 .persona a { margin-top: 20px; align-self: flex-start; font-size: 14px; letter-spacing: .05em; text-decoration: none; border-bottom: 1px solid var(--ambar); padding-bottom: 3px; }
 .persona a:hover { color: var(--ambar); }
 
-.contacto { margin: clamp(80px, 11vw, 150px) var(--gut) 0; padding: clamp(36px, 6vw, 80px); background: var(--grafito); border: 1px solid var(--linea); display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: end; position: relative; overflow: hidden; }
+.contacto { margin: clamp(80px, 11vw, 150px) var(--gut) 0; padding: clamp(28px, 6vw, 80px); background: var(--grafito); border: 1px solid var(--linea); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; position: relative; overflow: hidden; }
 .contacto::before { content: ""; position: absolute; right: -10%; top: -40%; width: 60%; height: 180%; background: radial-gradient(ellipse, rgba(217,106,0,.12), transparent 60%); pointer-events: none; }
 .contacto h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1.02; }
 .contacto .der { position: relative; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 .num { font-family: var(--mono); font-size: 14px; color: var(--gris); }
 
+.nota { margin-top: 18px !important; font-size: 14px !important; color: #8a9099 !important; }
+.pedido { position: relative; display: grid; gap: 16px; background: rgba(10,10,11,.55); border: 1px solid var(--linea); padding: clamp(20px, 3vw, 32px); }
+.interes { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.interes legend { font-size: 13px; color: var(--gris); margin-bottom: 10px; padding: 0; }
+.interes label { position: relative; cursor: pointer; }
+.interes input { position: absolute; opacity: 0; }
+.interes span { display: block; padding: 12px 14px; border: 1px solid #3a3b40; font-size: 14px; transition: border-color .2s, background .2s; }
+.interes input:checked + span { border-color: var(--ambar); background: rgba(217,106,0,.12); }
+.interes input:focus-visible + span { outline: 2px solid var(--ambar); outline-offset: 2px; }
+.campo { display: grid; gap: 6px; font-size: 13px; color: var(--gris); }
+.campo[hidden] { display: none; }
+.campo input { font: 400 16px var(--body); color: var(--arena); background: #0d0e10; border: 1px solid #3a3b40; padding: 13px 14px; border-radius: 0; }
+.campo input:focus { outline: none; border-color: var(--ambar); }
+.campo input[aria-invalid="true"] { border-color: #ff6a4d; }
+.fila { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; }
+.pedido .btn { width: 100%; }
+.aviso { margin: 0; font-size: 13px; color: #8a9099; }
+.aviso.error { color: #ff8a6b; }
 footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: #6b7078; text-transform: uppercase; }
 
 @media (max-width: 980px) {
@@ -163,6 +182,7 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
   .ruta div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--linea); margin-top: 26px; }
 }
 @media (max-width: 560px) {
+  .fila { grid-template-columns: 1fr; }
   body { font-size: 16px; }
   .specs { grid-template-columns: repeat(2, 1fr); }
   .specs div:nth-child(n) { border-left: 0; padding-left: 0; border-top: 1px solid var(--linea); }
@@ -182,8 +202,8 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
     <span>MONTALVO <b>DYNAMICS</b></span>
   </a>
   <div class="links">
-    <a href="#producto">Producto</a><a href="#tecnologia">Tecnología</a><a href="#ficha">Ficha</a><a href="#equipo">Equipo</a>
-    <a class="wa wa-nav" href="#contacto">WhatsApp</a>
+    <a href="#producto">Plataforma</a><a href="#tecnologia">Sistemas</a><a href="#ficha">Ficha</a><a href="#equipo">Equipo</a>
+    <a class="wa-nav" href="#contacto">Lote 01</a>
   </div>
 </nav>
 
@@ -195,62 +215,61 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
     <div class="sello">SISTEMA PROPIETARIO · CLASIFICADO</div>
   </div>
   <div class="txt entra">
-    <div class="ey">Prototipo 01 · Cochabamba 2026</div>
+    <div class="ey">Plataforma táctica no letal · Serie 01</div>
     <h1>VOID<br>ONE</h1>
-    <p>Marcador neumático no letal calibre .68. Diseñado y fabricado en Bolivia.</p>
-    <div class="cta"><a class="btn btn-1 wa" href="#contacto">Escribir por WhatsApp</a><a class="btn btn-2" href="#tecnologia">Ver tecnología</a></div>
+    <p>Marcador neumático calibre .68 para entrenamiento táctico, marcación y control no letal. Diseñado y fabricado en Bolivia.</p>
+    <div class="cta"><a class="btn btn-1" href="#contacto">Solicitar el lote 01</a><a class="btn btn-2" href="#tecnologia">Ver sistemas</a></div>
   </div>
   <div class="ctrl"><button type="button" id="dentro" aria-pressed="false">Ver por dentro</button></div>
   <div class="specs entra" aria-label="Especificaciones principales" style="animation-delay:.15s">
     <div><small>CALIBRE</small><b>.68</b></div>
-    <div><small>PRESIÓN</small><b>7,5<i>bar</i></b></div>
+    <div><small>PRESIÓN</small><b class="palabra">Regulable</b></div>
     <div><small>CAPACIDAD</small><b>10<i>bolas</i></b></div>
     <div><small>LARGO</small><b>987<i>mm</i></b></div>
-    <div><small>ENERGÍA</small><b>0<i>baterías</i></b></div>
+    <div><small>DISPARO</small><b>Semi<i>automático</i></b></div>
   </div>
 </header>
 
-<div class="cinta" aria-hidden="true"><div id="cinta">VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>HECHO EN COCHABAMBA<span>·</span></div></div>
+<div class="cinta" aria-hidden="true"><div id="cinta">VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>FABRICACIÓN NACIONAL<span>·</span>LOTE 01: 100 UNIDADES<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>FABRICACIÓN NACIONAL<span>·</span>LOTE 01: 100 UNIDADES<span>·</span>VOID ONE<span>·</span>MONTALVO DYNAMICS<span>·</span>FABRICACIÓN NACIONAL<span>·</span>LOTE 01: 100 UNIDADES<span>·</span></div></div>
 
 <section class="bloque" id="producto">
-  <div class="ey">01 · El producto</div>
-  <p class="manifiesto">Un marcador para <em>entrenar</em> como se entrena afuera, diseñado y fabricado <em>aquí</em>.</p>
-  <div class="dos" style="margin-top:48px">
-    <p>El VOID ONE es un marcador neumático no letal calibre .68 para entrenamiento táctico, marcación y uso recreativo. Funciona con aire comprimido: sin cápsulas desechables y sin baterías.</p>
-    <p>Su carcasa es modular y se fabrica con manufactura aditiva, así que cada parte se repara o se mejora sin cambiar el equipo completo.</p>
+  <div class="ey">01 · La plataforma</div>
+  <div class="dos" style="margin-top:22px">
+    <p>El VOID ONE es un marcador neumático no letal calibre .68 para entrenamiento táctico, marcación y control. Funciona con aire comprimido: sin cápsulas desechables, sin baterías y sin dependencia logística del exterior.</p>
+    <p>Su arquitectura es modular y se fabrica con manufactura aditiva: cada módulo se repara, reemplaza o actualiza sin retirar el equipo de servicio.</p>
   </div>
 </section>
 
 <section class="bloque" id="funciona">
-  <div class="ey">02 · Cómo funciona</div>
-  <h2>Tres pasos. El resto es ingeniería propia.</h2>
+  <div class="ey">02 · Operación</div>
+  <h2>Operación en tres fases. Ingeniería de uso reservado.</h2>
   <ol class="pasos">
-    <li><div class="n">01</div><h3>Cargar</h3><p>Se carga con aire comprimido, igual que una llanta. Sin cápsulas ni repuestos importados.</p></li>
-    <li><div class="n">02</div><h3>Apuntar</h3><p>Miras fijas de alta visibilidad hoy; mira inteligente S-01 en desarrollo.</p></li>
-    <li><div class="n">03</div><h3>Disparar</h3><p>Un sistema neumático propio libera el aire de forma controlada en cada disparo.</p></li>
+    <li><div class="n">01</div><h3>Presurización</h3><p>Se presuriza con aire comprimido desde cualquier compresor estándar. Sin cápsulas de CO₂ ni consumibles importados: autonomía logística total en el terreno.</p></li>
+    <li><div class="n">02</div><h3>Adquisición</h3><p>Miras de alta visibilidad para fijar el objetivo en segundos. Preparado para integrar la mira inteligente S-01.</p></li>
+    <li><div class="n">03</div><h3>Ejecución</h3><p>Un sistema neumático de desarrollo propio libera una descarga controlada y repetible en cada disparo semiautomático, sin depender de baterías.</p></li>
   </ol>
 </section>
 
 <section class="bloque" id="tecnologia">
-  <div class="ey">03 · Tecnología · Futuro desarrollo</div>
-  <h2>Mira S-01: menos fuego amigo en cada práctica.</h2>
+  <div class="ey">03 · Sistemas · Futuro desarrollo</div>
+  <h2>Mira S-01: identificación de aliados para evitar el fuego amigo.</h2>
   <div class="tec">
     <div class="hudbox" id="hudbox"><div class="vivo"><i></i>FUTURO DESARROLLO · MIRA S-01</div><svg id="hud" viewBox="0 0 1600 900" aria-label="Vista de la mira S-01 marcando un aliado y dos oponentes" role="img"></svg></div>
     <div>
-      <p>Una cámara y visión por computadora detectan a cada persona, la siguen y la clasifican antes de que aprietes el gatillo.</p>
+      <p>Una cámara y visión por computadora detectan, siguen y clasifican a cada persona en el campo antes de que el tirador apriete el gatillo.</p>
       <ul>
-        <li><b>01</b><span>Detecta y sigue a varias personas a la vez.</span></li>
-        <li><b>02</b><span>Reconoce a tu equipo y lo marca como aliado.</span></li>
-        <li><b>03</b><span>Si apuntas a un aliado, bloquea el disparo.</span></li>
-        <li><b>04</b><span>Nunca dispara por su cuenta: la decisión siempre es del tirador.</span></li>
+        <li><b>01</b><span>Detección y seguimiento simultáneo de múltiples objetivos.</span></li>
+        <li><b>02</b><span>Identificación de aliados en tiempo real.</span></li>
+        <li><b>03</b><span>Bloqueo del disparo cuando un aliado está en la línea de tiro.</span></li>
+        <li><b>04</b><span>Sin disparo autónomo: la decisión final siempre es del tirador.</span></li>
       </ul>
-      <a class="btn btn-2" style="margin-top:30px" href="https://santymontalvo.github.io/void-one/mira/" target="_blank" rel="noopener">Probar la demo</a>
+      <a class="btn btn-2" style="margin-top:30px" href="https://santymontalvo.github.io/void-one/mira/" target="_blank" rel="noopener">Ver la demo</a>
     </div>
   </div>
   <div class="ruta">
-    <div><small>FASE 01</small><h3>VOID ONE</h3><p>El marcador: neumático, modular y fabricado en Bolivia.</p><span class="estado si">PROTOTIPO FUNCIONAL</span></div>
-    <div><small>FASE 02</small><h3>Mira S-01</h3><p>Seguimiento de personas e identificación de aliados en tiempo real.</p><span class="estado">FUTURO DESARROLLO</span></div>
-    <div><small>FASE 03</small><h3>VOID Training</h3><p>Plataforma que registra disparos, puntería y fuego amigo para instructores.</p><span class="estado">EN DISEÑO</span></div>
+    <div><small>FASE 01</small><h3>VOID ONE</h3><p>Plataforma neumática modular, de fabricación nacional.</p><span class="estado si">PROTOTIPO FUNCIONAL</span></div>
+    <div><small>FASE 02</small><h3>Mira S-01</h3><p>Seguimiento de objetivos e identificación de aliados en tiempo real.</p><span class="estado">FUTURO DESARROLLO</span></div>
+    <div><small>FASE 03</small><h3>VOID Training</h3><p>Módulo adaptable a cada uso: en paintball reconoce a los equipos; en el hogar impide disparar a familiares o mascotas; en entrenamiento, selección de objetivos y cálculo de distancia para maximizar la precisión de cada tiro.</p><span class="estado">EN DISEÑO</span></div>
   </div>
 </section>
 
@@ -260,22 +279,25 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
   <dl class="ficha">
     <div><dt>Calibre</dt><dd>.68</dd></div>
     <div><dt>Sistema</dt><dd>Neumático, aire comprimido</dd></div>
-    <div><dt>Presión de trabajo</dt><dd>7,5 bar</dd></div>
+    <div><dt>Presión de trabajo</dt><dd>Regulable, 7,5 a 10 bar</dd></div>
     <div><dt>Disparo</dt><dd>Semiautomático</dd></div>
+    <div><dt>Velocidad de salida</dt><dd>Hasta 115 m/s*</dd></div>
     <div><dt>Capacidad</dt><dd>10 bolas</dd></div>
     <div><dt>Energía</dt><dd>Sin baterías</dd></div>
     <div><dt>Largo total</dt><dd>987 mm</dd></div>
     <div><dt>Carcasa</dt><dd>Modular, manufactura aditiva</dd></div>
+    <div><dt>Fabricación</dt><dd>Cochabamba, Bolivia</dd></div>
   </dl>
+  <p class="nota">* Estimado de cálculo a 10 bar con proyectil de 3,4 g. En verificación con cronógrafo.</p>
 </section>
 
 <section class="bloque" id="origen">
-  <div class="ey">05 · Hecho en Cochabamba</div>
-  <h2>Ingeniería propia, de la idea al ensamble.</h2>
+  <div class="ey">05 · Fabricación nacional</div>
+  <h2>Soberanía de fabricación, de la idea al ensamble.</h2>
   <div class="tres">
-    <div><h3>Modular</h3><p>Cada módulo de la carcasa se cambia por separado. Si algo se daña, se reemplaza solo esa parte.</p></div>
-    <div><h3>Reparable</h3><p>Pensado para mantenerse aquí, sin esperar repuestos de afuera.</p></div>
-    <div><h3>Local</h3><p>Diseñado, simulado, impreso y armado en Cochabamba.</p></div>
+    <div><h3>Modular</h3><p>Cada módulo se reemplaza por separado: si algo se daña, se cambia solo esa parte.</p></div>
+    <div><h3>Mantenible</h3><p>Mantenimiento y repuestos dentro del país, sin cadenas de suministro externas.</p></div>
+    <div><h3>Nacional</h3><p>Diseñado, simulado, fabricado y ensamblado en Cochabamba, Bolivia.</p></div>
   </div>
 </section>
 
@@ -289,8 +311,22 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
 </section>
 
 <section class="contacto" id="contacto">
-  <div><div class="ey">07 · Contacto</div><h2 style="margin-top:18px">¿Quieres verlo funcionar?</h2><p class="mut" style="margin:18px 0 0;max-width:44ch">Escríbenos para coordinar una demostración del VOID ONE y de la mira S-01.</p></div>
-  <div class="der"><a class="btn btn-1 wa" href="#contacto">Escribir por WhatsApp</a><span class="num" id="numero"></span></div>
+  <div class="izq"><div class="ey">07 · Lote 01</div><h2 style="margin-top:18px">Lote inicial: 100 unidades.</h2>
+    <p class="mut" style="margin:18px 0 0;max-width:42ch">Abrimos el primer lote de producción del VOID ONE y recibimos propuestas de inversión y sociedad. Déjanos tu WhatsApp y te contactamos.</p>
+    <p class="mut" style="margin:22px 0 0;font-size:15px">¿Prefieres escribir directo? <a class="wa" href="#contacto">WhatsApp</a> · <span class="num" id="numero"></span></p></div>
+  <form class="pedido" id="pedido" novalidate>
+    <fieldset class="interes"><legend>Me interesa</legend>
+      <label><input type="radio" name="interes" value="Comprar unidades del lote 01" checked><span>Comprar del lote 01</span></label>
+      <label><input type="radio" name="interes" value="Invertir en Montalvo Dynamics"><span>Invertir</span></label>
+      <label><input type="radio" name="interes" value="Ser socio estratégico"><span>Ser socio</span></label>
+      <label><input type="radio" name="interes" value="Recibir más información"><span>Información</span></label>
+    </fieldset>
+    <label class="campo">Nombre<input name="nombre" autocomplete="name" required></label>
+    <div class="fila"><label class="campo">Organización (opcional)<input name="org" autocomplete="organization"></label>
+      <label class="campo" id="cantidad">Unidades<input name="cantidad" type="number" min="1" max="100" inputmode="numeric" placeholder="Ej. 5"></label></div>
+    <button class="btn btn-1" type="submit">Enviar por WhatsApp</button>
+    <p class="aviso" id="aviso" role="status">Se abre WhatsApp con tu mensaje listo para enviar. Registrar tu interés no tiene costo ni compromiso.</p>
+  </form>
 </section>
 
 <footer><span>Montalvo Industries · División Dynamics</span><span>Cochabamba, Bolivia · 2026</span></footer>
@@ -298,13 +334,31 @@ footer { margin-top: clamp(64px, 9vw, 110px); padding: 28px var(--gut) 40px; bor
 <script>
 /* WhatsApp: numero con codigo de pais, solo digitos (ej. 5917xxxxxxx). Vacio = pendiente. */
 const WA_NUM = '59160713875';
-const WA_TXT = 'Hola, vi el VOID ONE y quiero saber más';
+const WA_TXT = 'Hola, vi el VOID ONE y quiero información del lote 01';
 (function () {
   const n = document.getElementById('numero');
   if (!WA_NUM) { n.textContent = 'Número de WhatsApp: pendiente'; return; }
   const url = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_TXT);
   document.querySelectorAll('a.wa').forEach(a => { a.href = url; });
-  n.textContent = 'WhatsApp +' + WA_NUM.replace(/^(\d{3})(\d+)/, '$1 $2');
+  n.textContent = '+' + WA_NUM.replace(/^(\d{3})(\d+)/, '$1 $2');
+})();
+
+/* Formulario del lote 01: arma el mensaje y abre WhatsApp (llega desde el numero de la persona) */
+(function () {
+  const f = document.getElementById('pedido'), av = document.getElementById('aviso'), cant = document.getElementById('cantidad');
+  const sync = () => { cant.hidden = f.interes.value !== 'Comprar unidades del lote 01'; };
+  f.addEventListener('change', sync); sync();
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    const nom = f.nombre.value.trim(), org = f.org.value.trim(), n = parseInt(f.cantidad.value, 10);
+    f.nombre.setAttribute('aria-invalid', nom ? 'false' : 'true');
+    if (!nom) { av.textContent = 'Escribe tu nombre para enviar el mensaje.'; av.classList.add('error'); f.nombre.focus(); return; }
+    av.classList.remove('error'); av.textContent = 'Abriendo WhatsApp…';
+    let t = 'Hola, soy ' + nom + (org ? ' (' + org + ')' : '') + '. Vi el VOID ONE y me interesa: ' + f.interes.value;
+    if (!cant.hidden && n > 0) t += ', ' + n + (n === 1 ? ' unidad' : ' unidades');
+    t += '.';
+    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(t), '_blank', 'noopener');
+  });
 })();
 
 /* HUD de la mira S-01 (vista previa animada) */
